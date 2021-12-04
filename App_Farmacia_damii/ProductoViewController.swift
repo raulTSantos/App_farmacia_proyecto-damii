@@ -20,6 +20,9 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
     @IBOutlet weak var tablaProducto: UITableView!
     @IBOutlet weak var buscadorProducto: UISearchBar!
     
+    @IBOutlet weak var btnPerfil: UIButton!
+    
+    var userPerfil = ""
     // base de datos de producto
    // let dataProductos = Firestore.firestore()
     var productoObj = [Producto]()
@@ -42,8 +45,10 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.setHidesBackButton(true, animated: false)
         setUpProductos()
         setUpSearchBar()
+        btnPerfil.setTitle(userPerfil, for: .normal)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -59,12 +64,19 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
         cell.txtPrecio.text = "$/ "+String(currentProductoArray[indexPath.row].precio)
         cell.txtCategoria.text = currentProductoArray[indexPath.row].categoria.rawValue
         cell.imagenProducto.image = UIImage(named: currentProductoArray[indexPath.row].image)
+        cell.btnAdquirir.tag = indexPath.row
+        cell.btnAdquirir.addTarget(self, action: #selector(clickBtn), for: .touchUpInside)
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
-    
+    @objc func clickBtn(sender :UIButton){
+        print("pulsado \(sender.tag)")
+        let alert = UIAlertController ( title: "Inf", message: "Agregado a la compra", preferredStyle: .alert)
+        alert.addAction(UIAlertAction (title: "Aceptar", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
     private func setUpProductos(){
         productoObj.append(Producto(nombre: "Paracetamol", toma: "pastillas", precio: Double(1.20), categoria: .analgesico,image : "image01"))
         productoObj.append(Producto(nombre: "Paracetamol", toma: "pastillas", precio: Double(1.00), categoria: .analgesico,image : "image01"))
@@ -152,10 +164,11 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
     private func firebaseLogOut(){
         do{
             try Auth.auth().signOut()
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            navigationController?.popViewController(animated: true)
+            /*let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let viewc = storyboard.instantiateViewController(withIdentifier: "login")
             viewc.modalPresentationStyle = .overFullScreen
-            self.present(viewc, animated: true)
+            self.present(viewc, animated: true)*/
         }catch{
         }
     }

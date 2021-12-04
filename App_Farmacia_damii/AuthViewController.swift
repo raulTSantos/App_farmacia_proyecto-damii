@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 class AuthViewController: UIViewController {
     
     @IBOutlet weak var txtClave: UITextField!
@@ -22,6 +23,7 @@ class AuthViewController: UIViewController {
     
     @IBOutlet weak var txtComfirmaClave: UITextField!
 
+  //  private let db = Firestore.firestore()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -81,9 +83,24 @@ class AuthViewController: UIViewController {
             if let result = authResult  , error == nil {
                 
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let viewc = storyboard.instantiateViewController(withIdentifier: "busquedaProducto")
-                viewc.modalPresentationStyle = .overFullScreen
-                self.present(viewc, animated: true)
+                 let viewc = storyboard.instantiateViewController(withIdentifier: "busquedaProducto") as! ProductoViewController
+                 viewc.userPerfil = self.txtEmail.text!
+                 self.navigationController?.pushViewController(viewc, animated: true)
+                
+               /* let newUser = self.db.collection("usuario").document()
+                newUser.setData(["email":self.txtEmail.text ?? "","clave":self.txtClave.text ?? "",
+                                 "nombre":self.txtNombre.text ?? "","apellido":self.txtApellido.text ?? "",
+                                 "telefono":self.txtTelefono.text ?? ""]){error in
+                                    if error == nil {
+                                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                        let viewc = storyboard.instantiateViewController(withIdentifier: "busquedaProducto") as! ProductoViewController
+                                        viewc.userPerfil = self.txtEmail.text!
+                                        self.navigationController?.pushViewController(viewc, animated: true)
+                                    } else {
+                                        print("no se registroooooo")
+                                    }
+                                    
+                }*/
                 print(result)
                 
             }else{
@@ -97,13 +114,11 @@ class AuthViewController: UIViewController {
         Auth.auth().signIn(withEmail: txtEmail.text!, password: txtClave.text!){
             (result ,error) in
             if let result = result , error == nil {
+                print(result)
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let viewc = storyboard.instantiateViewController(withIdentifier: "busquedaProducto")
-                viewc.modalPresentationStyle = .overFullScreen
-                self.present(viewc, animated: true)
-                 print(result)
-                /* let viewController = UIViewController(nibName: "PeliculaViewController", bundle: nil)
-                 self.navigationController?.pushViewController(viewController , animated: true)*/
+                let viewc = storyboard.instantiateViewController(withIdentifier: "busquedaProducto") as! ProductoViewController
+                viewc.userPerfil = self.txtEmail.text!
+                self.navigationController?.pushViewController(viewc, animated: true)
                 
             }else{
                 let alert = UIAlertController ( title: "Error", message: "Se ha producido un Error", preferredStyle: .alert)

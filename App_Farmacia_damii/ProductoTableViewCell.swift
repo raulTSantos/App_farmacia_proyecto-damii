@@ -18,9 +18,6 @@ class ProductoTableViewCell: UITableViewCell {
     @IBOutlet weak var txtPrecio: UILabel!
     @IBOutlet weak var btnAdquirir: UIButton!
     
-    
-    
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -28,8 +25,6 @@ class ProductoTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        let alert = UIAlertController ( title: "Error", message: "Se ha producido un Error", preferredStyle: .alert)
-        alert.addAction(UIAlertAction (title: "Aceptar", style: .default))
 
     }
     

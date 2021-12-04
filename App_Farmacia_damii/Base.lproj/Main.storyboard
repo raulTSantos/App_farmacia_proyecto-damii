@@ -312,17 +312,15 @@
                                     <outlet property="delegate" destination="VWT-VW-Gj8" id="iUZ-zn-tyV"/>
                                 </connections>
                             </tableView>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="183" translatesAutoresizingMaskIntoConstraints="NO" id="MPl-jn-lvr">
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="13" translatesAutoresizingMaskIntoConstraints="NO" id="MPl-jn-lvr">
                                 <rect key="frame" x="16" y="61" width="343" height="30"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="raulToledo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Mu-dN-eoQ">
-                                        <rect key="frame" x="0.0" y="0.0" width="80" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7HR-dE-nbi">
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="30"/>
+                                        <state key="normal" title="Mi perfil"/>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OUh-jt-AaJ">
-                                        <rect key="frame" x="263" y="0.0" width="80" height="30"/>
+                                        <rect key="frame" x="207" y="0.0" width="136" height="30"/>
                                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" title="Salir">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -348,6 +346,7 @@
                         <viewLayoutGuide key="safeArea" id="O9g-Vu-hLo"/>
                     </view>
                     <connections>
+                        <outlet property="btnPerfil" destination="7HR-dE-nbi" id="Wbz-CJ-9yw"/>
                         <outlet property="buscadorProducto" destination="GQw-LX-a7b" id="MRZ-T0-vt8"/>
                         <outlet property="tablaProducto" destination="AFu-id-Tb7" id="YEg-65-FHO"/>
                     </connections>
