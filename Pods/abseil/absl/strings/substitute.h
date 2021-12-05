@@ -50,7 +50,7 @@
 //
 // Supported types:
 //   * absl::string_view, std::string, const char* (null is equivalent to "")
-//   * int32_t, int64_t, uint32_t, uint64_t
+//   * int32_t, int64_t, uint32_t, uint64
 //   * float, double
 //   * bool (Printed as "true" or "false")
 //   * pointer types other than char* (Printed as "0x<lower case hex string>",
@@ -99,7 +99,7 @@ namespace substitute_internal {
 // This class has implicit constructors.
 class Arg {
  public:
-  // Overloads for string-y things
+  // Overloads for std::string-y things
   //
   // Explicitly overload `const char*` so the compiler doesn't cast to `bool`.
   Arg(const char* value)  // NOLINT(runtime/explicit)
@@ -120,9 +120,7 @@ class Arg {
   // representation. However, we can't really know, so we make the caller decide
   // what to do.
   Arg(char value)  // NOLINT(runtime/explicit)
-      : piece_(scratch_, 1) {
-    scratch_[0] = value;
-  }
+      : piece_(scratch_, 1) { scratch_[0] = value; }
   Arg(short value)  // NOLINT(*)
       : piece_(scratch_,
                numbers_internal::FastIntToBuffer(value, scratch_) - scratch_) {}
@@ -205,11 +203,10 @@ constexpr const char* SkipNumber(const char* format) {
 }
 
 constexpr int PlaceholderBitmask(const char* format) {
-  return !*format
-             ? 0
-             : *format != '$' ? PlaceholderBitmask(format + 1)
-                              : (CalculateOneBit(format + 1) |
-                                 PlaceholderBitmask(SkipNumber(format + 1)));
+  return !*format ? 0 : *format != '$'
+                             ? PlaceholderBitmask(format + 1)
+                             : (CalculateOneBit(format + 1) |
+                                   PlaceholderBitmask(SkipNumber(format + 1)));
 }
 #endif  // ABSL_BAD_CALL_IF
 
@@ -363,13 +360,13 @@ inline void SubstituteAndAppend(
 void SubstituteAndAppend(std::string* output, const char* format)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 0,
                      "There were no substitution arguments "
-                     "but this format string has a $[0-9] in it");
+                     "but this format std::string has a $[0-9] in it");
 
 void SubstituteAndAppend(std::string* output, const char* format,
                          const substitute_internal::Arg& a0)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 1,
                      "There was 1 substitution argument given, but "
-                     "this format string is either missing its $0, or "
+                     "this format std::string is either missing its $0, or "
                      "contains one of $1-$9");
 
 void SubstituteAndAppend(std::string* output, const char* format,
@@ -377,7 +374,7 @@ void SubstituteAndAppend(std::string* output, const char* format,
                          const substitute_internal::Arg& a1)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 3,
                      "There were 2 substitution arguments given, but "
-                     "this format string is either missing its $0/$1, or "
+                     "this format std::string is either missing its $0/$1, or "
                      "contains one of $2-$9");
 
 void SubstituteAndAppend(std::string* output, const char* format,
@@ -386,7 +383,7 @@ void SubstituteAndAppend(std::string* output, const char* format,
                          const substitute_internal::Arg& a2)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 7,
                      "There were 3 substitution arguments given, but "
-                     "this format string is either missing its $0/$1/$2, or "
+                     "this format std::string is either missing its $0/$1/$2, or "
                      "contains one of $3-$9");
 
 void SubstituteAndAppend(std::string* output, const char* format,
@@ -396,7 +393,7 @@ void SubstituteAndAppend(std::string* output, const char* format,
                          const substitute_internal::Arg& a3)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 15,
                      "There were 4 substitution arguments given, but "
-                     "this format string is either missing its $0-$3, or "
+                     "this format std::string is either missing its $0-$3, or "
                      "contains one of $4-$9");
 
 void SubstituteAndAppend(std::string* output, const char* format,
@@ -407,7 +404,7 @@ void SubstituteAndAppend(std::string* output, const char* format,
                          const substitute_internal::Arg& a4)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 31,
                      "There were 5 substitution arguments given, but "
-                     "this format string is either missing its $0-$4, or "
+                     "this format std::string is either missing its $0-$4, or "
                      "contains one of $5-$9");
 
 void SubstituteAndAppend(std::string* output, const char* format,
@@ -419,7 +416,7 @@ void SubstituteAndAppend(std::string* output, const char* format,
                          const substitute_internal::Arg& a5)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 63,
                      "There were 6 substitution arguments given, but "
-                     "this format string is either missing its $0-$5, or "
+                     "this format std::string is either missing its $0-$5, or "
                      "contains one of $6-$9");
 
 void SubstituteAndAppend(
@@ -429,7 +426,7 @@ void SubstituteAndAppend(
     const substitute_internal::Arg& a5, const substitute_internal::Arg& a6)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 127,
                      "There were 7 substitution arguments given, but "
-                     "this format string is either missing its $0-$6, or "
+                     "this format std::string is either missing its $0-$6, or "
                      "contains one of $7-$9");
 
 void SubstituteAndAppend(
@@ -440,7 +437,7 @@ void SubstituteAndAppend(
     const substitute_internal::Arg& a7)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 255,
                      "There were 8 substitution arguments given, but "
-                     "this format string is either missing its $0-$7, or "
+                     "this format std::string is either missing its $0-$7, or "
                      "contains one of $8-$9");
 
 void SubstituteAndAppend(
@@ -452,7 +449,7 @@ void SubstituteAndAppend(
     ABSL_BAD_CALL_IF(
         substitute_internal::PlaceholderBitmask(format) != 511,
         "There were 9 substitution arguments given, but "
-        "this format string is either missing its $0-$8, or contains a $9");
+        "this format std::string is either missing its $0-$8, or contains a $9");
 
 void SubstituteAndAppend(
     std::string* output, const char* format, const substitute_internal::Arg& a0,
@@ -463,7 +460,7 @@ void SubstituteAndAppend(
     const substitute_internal::Arg& a9)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 1023,
                      "There were 10 substitution arguments given, but this "
-                     "format string doesn't contain all of $0 through $9");
+                     "format std::string doesn't contain all of $0 through $9");
 #endif  // ABSL_BAD_CALL_IF
 
 // Substitute()
@@ -589,19 +586,19 @@ ABSL_MUST_USE_RESULT inline std::string Substitute(
 std::string Substitute(const char* format)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 0,
                      "There were no substitution arguments "
-                     "but this format string has a $[0-9] in it");
+                     "but this format std::string has a $[0-9] in it");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 1,
                      "There was 1 substitution argument given, but "
-                     "this format string is either missing its $0, or "
+                     "this format std::string is either missing its $0, or "
                      "contains one of $1-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a1)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 3,
                      "There were 2 substitution arguments given, but "
-                     "this format string is either missing its $0/$1, or "
+                     "this format std::string is either missing its $0/$1, or "
                      "contains one of $2-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
@@ -609,7 +606,7 @@ std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a2)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 7,
                      "There were 3 substitution arguments given, but "
-                     "this format string is either missing its $0/$1/$2, or "
+                     "this format std::string is either missing its $0/$1/$2, or "
                      "contains one of $3-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
@@ -618,7 +615,7 @@ std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a3)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 15,
                      "There were 4 substitution arguments given, but "
-                     "this format string is either missing its $0-$3, or "
+                     "this format std::string is either missing its $0-$3, or "
                      "contains one of $4-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
@@ -628,7 +625,7 @@ std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a4)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 31,
                      "There were 5 substitution arguments given, but "
-                     "this format string is either missing its $0-$4, or "
+                     "this format std::string is either missing its $0-$4, or "
                      "contains one of $5-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
@@ -639,7 +636,7 @@ std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a5)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 63,
                      "There were 6 substitution arguments given, but "
-                     "this format string is either missing its $0-$5, or "
+                     "this format std::string is either missing its $0-$5, or "
                      "contains one of $6-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
@@ -651,7 +648,7 @@ std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a6)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 127,
                      "There were 7 substitution arguments given, but "
-                     "this format string is either missing its $0-$6, or "
+                     "this format std::string is either missing its $0-$6, or "
                      "contains one of $7-$9");
 
 std::string Substitute(const char* format, const substitute_internal::Arg& a0,
@@ -664,7 +661,7 @@ std::string Substitute(const char* format, const substitute_internal::Arg& a0,
                        const substitute_internal::Arg& a7)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 255,
                      "There were 8 substitution arguments given, but "
-                     "this format string is either missing its $0-$7, or "
+                     "this format std::string is either missing its $0-$7, or "
                      "contains one of $8-$9");
 
 std::string Substitute(
@@ -676,7 +673,7 @@ std::string Substitute(
     ABSL_BAD_CALL_IF(
         substitute_internal::PlaceholderBitmask(format) != 511,
         "There were 9 substitution arguments given, but "
-        "this format string is either missing its $0-$8, or contains a $9");
+        "this format std::string is either missing its $0-$8, or contains a $9");
 
 std::string Substitute(
     const char* format, const substitute_internal::Arg& a0,
@@ -687,7 +684,7 @@ std::string Substitute(
     const substitute_internal::Arg& a9)
     ABSL_BAD_CALL_IF(substitute_internal::PlaceholderBitmask(format) != 1023,
                      "There were 10 substitution arguments given, but this "
-                     "format string doesn't contain all of $0 through $9");
+                     "format std::string doesn't contain all of $0 through $9");
 #endif  // ABSL_BAD_CALL_IF
 
 ABSL_NAMESPACE_END

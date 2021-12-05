@@ -24,16 +24,15 @@
 #include <functional>
 #include <iterator>
 
-#include "absl/status/status.h"
-#include "absl/strings/string_view.h"
-#include "absl/types/variant.h"
-
 #include "src/core/ext/filters/client_channel/server_address.h"
+#include "src/core/ext/filters/client_channel/service_config.h"
 #include "src/core/ext/filters/client_channel/subchannel_interface.h"
+#include "src/core/lib/gprpp/map.h"
 #include "src/core/lib/gprpp/orphanable.h"
 #include "src/core/lib/gprpp/ref_counted_ptr.h"
+#include "src/core/lib/gprpp/string_view.h"
+#include "src/core/lib/iomgr/combiner.h"
 #include "src/core/lib/iomgr/polling_entity.h"
-#include "src/core/lib/iomgr/work_serializer.h"
 #include "src/core/lib/transport/connectivity_state.h"
 
 namespace grpc_core {
@@ -73,7 +72,7 @@ extern DebugOnlyTraceFlag grpc_trace_lb_policy_refcount;
 /// LoadBalacingPolicy API.
 ///
 /// Note: All methods with a "Locked" suffix must be called from the
-/// work_serializer passed to the constructor.
+/// combiner passed to the constructor.
 ///
 /// Any I/O done by the LB policy should be done under the pollset_set
 /// returned by \a interested_parties().
@@ -94,11 +93,11 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
     /// Application-specific requests cost metrics.  Metric names are
     /// determined by the application.  Each value is an absolute cost
     /// (e.g. 3487 bytes of storage) associated with the request.
-    std::map<absl::string_view, double> request_cost;
+    std::map<StringView, double, StringLess> request_cost;
     /// Application-specific resource utilization metrics.  Metric names
     /// are determined by the application.  Each value is expressed as a
     /// fraction of total resources available.
-    std::map<absl::string_view, double> utilization;
+    std::map<StringView, double, StringLess> utilization;
   };
 
   /// Interface for accessing per-call state.
@@ -116,127 +115,119 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
 
     /// Returns the backend metric data returned by the server for the call,
     /// or null if no backend metric data was returned.
-    // TODO(roth): Move this out of CallState, since it should not be
-    // accessible to the picker, only to the recv_trailing_metadata_ready
-    // callback.  It should instead be in its own interface.
     virtual const BackendMetricData* GetBackendMetricData() = 0;
-
-    /// EXPERIMENTAL API.
-    /// Returns the value of the call attribute \a key.
-    /// Keys are static strings, so an attribute can be accessed by an LB
-    /// policy implementation only if it knows about the internal key.
-    /// Returns a null string_view if key not found.
-    virtual absl::string_view ExperimentalGetCallAttribute(const char* key) = 0;
   };
 
   /// Interface for accessing metadata.
   /// Implemented by the client channel and used by the SubchannelPicker.
   class MetadataInterface {
    public:
-    virtual ~MetadataInterface() = default;
+    class iterator
+        : public std::iterator<std::input_iterator_tag,
+                               std::pair<StringView, StringView>,  // value_type
+                               std::ptrdiff_t,  // difference_type
+                               std::pair<StringView, StringView>*,  // pointer
+                               std::pair<StringView, StringView>&   // reference
+                               > {
+     public:
+      iterator(const MetadataInterface* md, intptr_t handle)
+          : md_(md), handle_(handle) {}
+      iterator& operator++() {
+        handle_ = md_->IteratorHandleNext(handle_);
+        return *this;
+      }
+      bool operator==(iterator other) const {
+        return md_ == other.md_ && handle_ == other.handle_;
+      }
+      bool operator!=(iterator other) const { return !(*this == other); }
+      value_type operator*() const { return md_->IteratorHandleGet(handle_); }
 
-    //////////////////////////////////////////////////////////////////////////
-    // TODO(ctiller): DO NOT MAKE THIS A PUBLIC API YET
-    // This needs some API design to ensure we can add/remove/replace metadata
-    // keys... we're deliberately not doing so to save some time whilst
-    // cleaning up the internal metadata representation, but we should add
-    // something back before making this a public API.
-    //////////////////////////////////////////////////////////////////////////
+     private:
+      friend class MetadataInterface;
+      const MetadataInterface* md_;
+      intptr_t handle_;
+    };
+
+    virtual ~MetadataInterface() = default;
 
     /// Adds a key/value pair.
     /// Does NOT take ownership of \a key or \a value.
     /// Implementations must ensure that the key and value remain alive
     /// until the call ends.  If desired, they may be allocated via
     /// CallState::Alloc().
-    virtual void Add(absl::string_view key, absl::string_view value) = 0;
+    virtual void Add(StringView key, StringView value) = 0;
 
-    /// Produce a vector of metadata key/value strings for tests.
-    virtual std::vector<std::pair<std::string, std::string>>
-    TestOnlyCopyToVector() = 0;
+    /// Iteration interface.
+    virtual iterator begin() const = 0;
+    virtual iterator end() const = 0;
 
-    virtual absl::optional<absl::string_view> Lookup(
-        absl::string_view key, std::string* buffer) const = 0;
+    /// Removes the element pointed to by \a it.
+    /// Returns an iterator pointing to the next element.
+    virtual iterator erase(iterator it) = 0;
+
+   protected:
+    intptr_t GetIteratorHandle(const iterator& it) const { return it.handle_; }
+
+   private:
+    friend class iterator;
+
+    virtual intptr_t IteratorHandleNext(intptr_t handle) const = 0;
+    virtual std::pair<StringView /*key*/, StringView /*value */>
+    IteratorHandleGet(intptr_t handle) const = 0;
   };
 
   /// Arguments used when picking a subchannel for a call.
   struct PickArgs {
-    /// The path of the call.  Indicates the RPC service and method name.
-    absl::string_view path;
     /// Initial metadata associated with the picking call.
     /// The LB policy may use the existing metadata to influence its routing
     /// decision, and it may add new metadata elements to be sent with the
     /// call to the chosen backend.
     MetadataInterface* initial_metadata;
     /// An interface for accessing call state.  Can be used to allocate
-    /// memory associated with the call in an efficient way.
+    /// data associated with the call in an efficient way.
     CallState* call_state;
   };
 
   /// The result of picking a subchannel for a call.
   struct PickResult {
-    /// A successful pick.
-    struct Complete {
-      /// The subchannel to be used for the call.  Must be non-null.
-      RefCountedPtr<SubchannelInterface> subchannel;
-
-      /// Callback set by LB policy to be notified of trailing metadata.
-      /// If non-null, the client channel will invoke the callback
-      /// when trailing metadata is returned.
-      /// The metadata may be modified by the callback.  However, the callback
-      /// does not take ownership, so any data that needs to be used after
-      /// returning must be copied.
-      /// The call state can be used to obtain backend metric data.
-      // TODO(roth): The arguments to this callback should be moved into a
-      // struct, so that we can later add new fields without breaking
-      // existing implementations.
-      std::function<void(absl::Status, MetadataInterface*, CallState*)>
-          recv_trailing_metadata_ready;
-
-      explicit Complete(
-          RefCountedPtr<SubchannelInterface> sc,
-          std::function<void(absl::Status, MetadataInterface*, CallState*)> cb =
-              nullptr)
-          : subchannel(std::move(sc)),
-            recv_trailing_metadata_ready(std::move(cb)) {}
+    enum ResultType {
+      /// Pick complete.  If \a subchannel is non-null, the client channel
+      /// will immediately proceed with the call on that subchannel;
+      /// otherwise, it will drop the call.
+      PICK_COMPLETE,
+      /// Pick cannot be completed until something changes on the control
+      /// plane.  The client channel will queue the pick and try again the
+      /// next time the picker is updated.
+      PICK_QUEUE,
+      /// Pick failed.  If the call is wait_for_ready, the client channel
+      /// will wait for the next picker and try again; otherwise, it
+      /// will immediately fail the call with the status indicated via
+      /// \a error (although the call may be retried if the client channel
+      /// is configured to do so).
+      PICK_FAILED,
     };
+    ResultType type;
 
-    /// Pick cannot be completed until something changes on the control
-    /// plane.  The client channel will queue the pick and try again the
-    /// next time the picker is updated.
-    struct Queue {};
+    /// Used only if type is PICK_COMPLETE.  Will be set to the selected
+    /// subchannel, or nullptr if the LB policy decides to drop the call.
+    RefCountedPtr<SubchannelInterface> subchannel;
 
-    /// Pick failed.  If the call is wait_for_ready, the client channel
-    /// will wait for the next picker and try again; otherwise, it
-    /// will immediately fail the call with the status indicated (although
-    /// the call may be retried if the client channel is configured to do so).
-    struct Fail {
-      absl::Status status;
+    /// Used only if type is PICK_FAILED.
+    /// Error to be set when returning a failure.
+    // TODO(roth): Replace this with something similar to grpc::Status,
+    // so that we don't expose grpc_error to this API.
+    grpc_error* error = GRPC_ERROR_NONE;
 
-      explicit Fail(absl::Status s) : status(s) {}
-    };
-
-    /// Pick will be dropped with the status specified.
-    /// Unlike FailPick, the call will be dropped even if it is
-    /// wait_for_ready, and retries (if configured) will be inhibited.
-    struct Drop {
-      absl::Status status;
-
-      explicit Drop(absl::Status s) : status(s) {}
-    };
-
-    // A pick result must be one of these types.
-    // Default to Queue, just to allow default construction.
-    absl::variant<Complete, Queue, Fail, Drop> result = Queue();
-
-    PickResult() = default;
-    // NOLINTNEXTLINE(google-explicit-constructor)
-    PickResult(Complete complete) : result(std::move(complete)) {}
-    // NOLINTNEXTLINE(google-explicit-constructor)
-    PickResult(Queue queue) : result(queue) {}
-    // NOLINTNEXTLINE(google-explicit-constructor)
-    PickResult(Fail fail) : result(std::move(fail)) {}
-    // NOLINTNEXTLINE(google-explicit-constructor)
-    PickResult(Drop drop) : result(std::move(drop)) {}
+    /// Used only if type is PICK_COMPLETE.
+    /// Callback set by LB policy to be notified of trailing metadata.
+    /// If set by LB policy, the client channel will invoke the callback
+    /// when trailing metadata is returned.
+    /// The metadata may be modified by the callback.  However, the callback
+    /// does not take ownership, so any data that needs to be used after
+    /// returning must be copied.
+    /// The call state can be used to obtain backend metric data.
+    std::function<void(grpc_error*, MetadataInterface*, CallState*)>
+        recv_trailing_metadata_ready;
   };
 
   /// A subchannel picker is the object used to pick the subchannel to
@@ -251,7 +242,7 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
   /// live in the LB policy object itself.
   ///
   /// Currently, pickers are always accessed from within the
-  /// client_channel data plane mutex, so they do not have to be
+  /// client_channel data plane combiner, so they do not have to be
   /// thread-safe.
   class SubchannelPicker {
    public:
@@ -263,11 +254,9 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
 
   /// A proxy object implemented by the client channel and used by the
   /// LB policy to communicate with the channel.
-  // TODO(roth): Once insecure builds go away, add methods for accessing
-  // channel creds.  By default, that should strip off the call creds
-  // attached to the channel creds, but there should also be a "use at
-  // your own risk" option to get the channel creds without stripping
-  // off the attached call creds.
+  // TODO(juanlishen): Consider adding a mid-layer subclass that helps handle
+  // things like swapping in pending policy when it's ready. Currently, we are
+  // duplicating the logic in many subclasses.
   class ChannelControlHelper {
    public:
     ChannelControlHelper() = default;
@@ -275,24 +264,19 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
 
     /// Creates a new subchannel with the specified channel args.
     virtual RefCountedPtr<SubchannelInterface> CreateSubchannel(
-        ServerAddress address, const grpc_channel_args& args) = 0;
+        const grpc_channel_args& args) = 0;
 
     /// Sets the connectivity state and returns a new picker to be used
     /// by the client channel.
     virtual void UpdateState(grpc_connectivity_state state,
-                             const absl::Status& status,
                              std::unique_ptr<SubchannelPicker>) = 0;
 
     /// Requests that the resolver re-resolve.
     virtual void RequestReresolution() = 0;
 
-    /// Returns the channel authority.
-    virtual absl::string_view GetAuthority() = 0;
-
     /// Adds a trace message associated with the channel.
     enum TraceSeverity { TRACE_INFO, TRACE_WARNING, TRACE_ERROR };
-    virtual void AddTraceEvent(TraceSeverity severity,
-                               absl::string_view message) = 0;
+    virtual void AddTraceEvent(TraceSeverity severity, StringView message) = 0;
   };
 
   /// Interface for configuration data used by an LB policy implementation.
@@ -300,7 +284,7 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
   /// return the parameters they need.
   class Config : public RefCounted<Config> {
    public:
-    ~Config() override = default;
+    virtual ~Config() = default;
 
     // Returns the load balancing policy name
     virtual const char* name() const = 0;
@@ -318,15 +302,19 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
     UpdateArgs() = default;
     ~UpdateArgs() { grpc_channel_args_destroy(args); }
     UpdateArgs(const UpdateArgs& other);
-    UpdateArgs(UpdateArgs&& other) noexcept;
+    UpdateArgs(UpdateArgs&& other);
     UpdateArgs& operator=(const UpdateArgs& other);
-    UpdateArgs& operator=(UpdateArgs&& other) noexcept;
+    UpdateArgs& operator=(UpdateArgs&& other);
   };
 
   /// Args used to instantiate an LB policy.
   struct Args {
-    /// The work_serializer under which all LB policy calls will be run.
-    std::shared_ptr<WorkSerializer> work_serializer;
+    /// The combiner under which all LB policy calls will be run.
+    /// Policy does NOT take ownership of the reference to the combiner.
+    // TODO(roth): Once we have a C++-like interface for combiners, this
+    // API should change to take a smart pointer that does pass ownership
+    // of a reference.
+    Combiner* combiner = nullptr;
     /// Channel control helper.
     /// Note: LB policies MUST NOT call any method on the helper from
     /// their constructor.
@@ -340,7 +328,7 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
   };
 
   explicit LoadBalancingPolicy(Args args, intptr_t initial_refcount = 1);
-  ~LoadBalancingPolicy() override;
+  virtual ~LoadBalancingPolicy();
 
   // Not copyable nor movable.
   LoadBalancingPolicy(const LoadBalancingPolicy&) = delete;
@@ -364,10 +352,10 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
 
   grpc_pollset_set* interested_parties() const { return interested_parties_; }
 
-  // Note: This must be invoked while holding the work_serializer.
+  // Note: This must be invoked while holding the combiner.
   void Orphan() override;
 
-  // A picker that returns PickResult::Queue for all picks.
+  // A picker that returns PICK_QUEUE for all picks.
   // Also calls the parent LB policy's ExitIdleLocked() method when the
   // first pick is seen.
   class QueuePicker : public SubchannelPicker {
@@ -375,32 +363,31 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
     explicit QueuePicker(RefCountedPtr<LoadBalancingPolicy> parent)
         : parent_(std::move(parent)) {}
 
-    ~QueuePicker() override { parent_.reset(DEBUG_LOCATION, "QueuePicker"); }
+    ~QueuePicker() { parent_.reset(DEBUG_LOCATION, "QueuePicker"); }
 
     PickResult Pick(PickArgs args) override;
 
    private:
+    static void CallExitIdle(void* arg, grpc_error* error);
+
     RefCountedPtr<LoadBalancingPolicy> parent_;
     bool exit_idle_called_ = false;
   };
 
-  // A picker that returns PickResult::Fail for all picks.
+  // A picker that returns PICK_TRANSIENT_FAILURE for all picks.
   class TransientFailurePicker : public SubchannelPicker {
    public:
-    explicit TransientFailurePicker(absl::Status status) : status_(status) {}
+    explicit TransientFailurePicker(grpc_error* error) : error_(error) {}
+    ~TransientFailurePicker() override { GRPC_ERROR_UNREF(error_); }
 
-    PickResult Pick(PickArgs /*args*/) override {
-      return PickResult::Fail(status_);
-    }
+    PickResult Pick(PickArgs args) override;
 
    private:
-    absl::Status status_;
+    grpc_error* error_;
   };
 
  protected:
-  std::shared_ptr<WorkSerializer> work_serializer() const {
-    return work_serializer_;
-  }
+  Combiner* combiner() const { return combiner_; }
 
   // Note: LB policies MUST NOT call any method on the helper from their
   // constructor.
@@ -412,8 +399,8 @@ class LoadBalancingPolicy : public InternallyRefCounted<LoadBalancingPolicy> {
   virtual void ShutdownLocked() = 0;
 
  private:
-  /// Work Serializer under which LB policy actions take place.
-  std::shared_ptr<WorkSerializer> work_serializer_;
+  /// Combiner under which LB policy actions take place.
+  Combiner* combiner_;
   /// Owned pointer to interested parties in load balancing decisions.
   grpc_pollset_set* interested_parties_;
   /// Channel control helper.

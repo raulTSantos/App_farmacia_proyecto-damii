@@ -7,12 +7,36 @@
  * regenerated. */
 
 #include <stddef.h>
-#include "upb/msg_internal.h"
-#include "google/api/annotations.upb.h"
-#include "google/api/http.upb.h"
-#include "google/protobuf/descriptor.upb.h"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/msg.h"
+#else
+  #include  "upb/msg.h"
+#endif
+#if COCOAPODS==1
+  #include  "src/core/ext/upb-generated/google/api/annotations.upb.h"
+#else
+  #include  "google/api/annotations.upb.h"
+#endif
+#if COCOAPODS==1
+  #include  "src/core/ext/upb-generated/google/api/http.upb.h"
+#else
+  #include  "google/api/http.upb.h"
+#endif
+#if COCOAPODS==1
+  #include  "src/core/ext/upb-generated/google/protobuf/descriptor.upb.h"
+#else
+  #include  "google/protobuf/descriptor.upb.h"
+#endif
 
-#include "upb/port_def.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_def.inc"
+#else
+  #include  "upb/port_def.inc"
+#endif
 
-#include "upb/port_undef.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_undef.inc"
+#else
+  #include  "upb/port_undef.inc"
+#endif
 

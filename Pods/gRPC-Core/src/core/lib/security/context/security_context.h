@@ -54,9 +54,7 @@ struct grpc_auth_context
       grpc_core::RefCountedPtr<grpc_auth_context> chained)
       : grpc_core::RefCounted<grpc_auth_context,
                               grpc_core::NonPolymorphicRefCount>(
-            GRPC_TRACE_FLAG_ENABLED(grpc_trace_auth_context_refcount)
-                ? "auth_context_refcount"
-                : nullptr),
+            &grpc_trace_auth_context_refcount),
         chained_(std::move(chained)) {
     if (chained_ != nullptr) {
       peer_identity_property_name_ = chained_->peer_identity_property_name_;

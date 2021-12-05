@@ -17,8 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-      FirebaseApp.configure()
+    // FirebaseApp.configure()
+      //  Fabric.with([Crashlytics.self])
         return true
+    }
+    override init() {
+        super.init()
+        FirebaseApp.configure()
+        // not really needed unless you really need it
+        //FIRDatabase.database().persistenceEnabled = true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

@@ -7,23 +7,35 @@
  * regenerated. */
 
 #include <stddef.h>
-#include "upb/msg_internal.h"
-#include "google/protobuf/struct.upb.h"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/msg.h"
+#else
+  #include  "upb/msg.h"
+#endif
+#if COCOAPODS==1
+  #include  "src/core/ext/upb-generated/google/protobuf/struct.upb.h"
+#else
+  #include  "google/protobuf/struct.upb.h"
+#endif
 
-#include "upb/port_def.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_def.inc"
+#else
+  #include  "upb/port_def.inc"
+#endif
 
 static const upb_msglayout *const google_protobuf_Struct_submsgs[1] = {
   &google_protobuf_Struct_FieldsEntry_msginit,
 };
 
 static const upb_msglayout_field google_protobuf_Struct__fields[1] = {
-  {1, UPB_SIZE(0, 0), 0, 0, 11, _UPB_MODE_MAP},
+  {1, UPB_SIZE(0, 0), 0, 0, 11, 3},
 };
 
 const upb_msglayout google_protobuf_Struct_msginit = {
   &google_protobuf_Struct_submsgs[0],
   &google_protobuf_Struct__fields[0],
-  UPB_SIZE(8, 8), 1, false, 1, 255,
+  UPB_SIZE(4, 8), 1, false,
 };
 
 static const upb_msglayout *const google_protobuf_Struct_FieldsEntry_submsgs[1] = {
@@ -31,14 +43,14 @@ static const upb_msglayout *const google_protobuf_Struct_FieldsEntry_submsgs[1] 
 };
 
 static const upb_msglayout_field google_protobuf_Struct_FieldsEntry__fields[2] = {
-  {1, UPB_SIZE(0, 0), 0, 0, 9, _UPB_MODE_SCALAR},
-  {2, UPB_SIZE(8, 16), 0, 0, 11, _UPB_MODE_SCALAR},
+  {1, UPB_SIZE(0, 0), 0, 0, 9, 1},
+  {2, UPB_SIZE(8, 16), 0, 0, 11, 1},
 };
 
 const upb_msglayout google_protobuf_Struct_FieldsEntry_msginit = {
   &google_protobuf_Struct_FieldsEntry_submsgs[0],
   &google_protobuf_Struct_FieldsEntry__fields[0],
-  UPB_SIZE(16, 32), 2, false, 2, 255,
+  UPB_SIZE(16, 32), 2, false,
 };
 
 static const upb_msglayout *const google_protobuf_Value_submsgs[2] = {
@@ -47,18 +59,18 @@ static const upb_msglayout *const google_protobuf_Value_submsgs[2] = {
 };
 
 static const upb_msglayout_field google_protobuf_Value__fields[6] = {
-  {1, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 14, _UPB_MODE_SCALAR},
-  {2, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 1, _UPB_MODE_SCALAR},
-  {3, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 9, _UPB_MODE_SCALAR},
-  {4, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 8, _UPB_MODE_SCALAR},
-  {5, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 1, 11, _UPB_MODE_SCALAR},
-  {6, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 11, _UPB_MODE_SCALAR},
+  {1, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 14, 1},
+  {2, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 1, 1},
+  {3, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 9, 1},
+  {4, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 8, 1},
+  {5, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 1, 11, 1},
+  {6, UPB_SIZE(0, 0), UPB_SIZE(-9, -17), 0, 11, 1},
 };
 
 const upb_msglayout google_protobuf_Value_msginit = {
   &google_protobuf_Value_submsgs[0],
   &google_protobuf_Value__fields[0],
-  UPB_SIZE(16, 32), 6, false, 6, 255,
+  UPB_SIZE(16, 32), 6, false,
 };
 
 static const upb_msglayout *const google_protobuf_ListValue_submsgs[1] = {
@@ -66,14 +78,18 @@ static const upb_msglayout *const google_protobuf_ListValue_submsgs[1] = {
 };
 
 static const upb_msglayout_field google_protobuf_ListValue__fields[1] = {
-  {1, UPB_SIZE(0, 0), 0, 0, 11, _UPB_MODE_ARRAY},
+  {1, UPB_SIZE(0, 0), 0, 0, 11, 3},
 };
 
 const upb_msglayout google_protobuf_ListValue_msginit = {
   &google_protobuf_ListValue_submsgs[0],
   &google_protobuf_ListValue__fields[0],
-  UPB_SIZE(8, 8), 1, false, 1, 255,
+  UPB_SIZE(4, 8), 1, false,
 };
 
-#include "upb/port_undef.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_undef.inc"
+#else
+  #include  "upb/port_undef.inc"
+#endif
 

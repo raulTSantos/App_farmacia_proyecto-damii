@@ -79,13 +79,7 @@ class AuthViewController: UIViewController {
         }
         login()
     }
-    
-    @IBAction func googleAuthAction(_ sender: Any) {
-    }
-    
-    
-    @IBAction func facebookAuthAction(_ sender: Any) {
-    }
+
     
     func singUp(){
         
@@ -121,10 +115,10 @@ class AuthViewController: UIViewController {
         }
     }
     
-    /*
+
     @IBAction func registrarAction(_ sender: Any) {
         
-        if let nombre = txtNombre.text,
+        /*if let nombre = txtNombre.text,
             let apellido = txtNombre.text,
             let telefono = txtNombre.text,
             let email = txtEmail.text,
@@ -150,9 +144,9 @@ class AuthViewController: UIViewController {
             }
         }else{
             self.mensaje(texto: "Campos obligatorios")
-        }
+        }*/
     }
-    */
+
     
     func login(){
         Auth.auth().signIn(withEmail: txtEmail.text!, password: txtClave.text!){
@@ -173,6 +167,12 @@ class AuthViewController: UIViewController {
         }
     }
     
+    @IBAction func googleAuthAction(_ sender: Any) {
+    }
+    
+    
+    @IBAction func facebookAuthAction(_ sender: Any) {
+    }
     
     func mensaje( titulo:String ,texto:String ){
         let alertaController = UIAlertController(title: titulo, message: texto, preferredStyle: .alert)

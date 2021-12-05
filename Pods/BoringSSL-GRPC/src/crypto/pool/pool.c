@@ -22,7 +22,6 @@
 #include <openssl_grpc/thread.h>
 
 #include "../internal.h"
-#include "../lhash/internal.h"
 #include "internal.h"
 
 

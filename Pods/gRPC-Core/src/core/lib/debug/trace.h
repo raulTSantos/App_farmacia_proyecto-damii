@@ -21,9 +21,8 @@
 
 #include <grpc/support/port_platform.h>
 
-#include <stdbool.h>
-
 #include <grpc/support/atm.h>
+#include <stdbool.h>
 
 #include "src/core/lib/gprpp/global_config.h"
 

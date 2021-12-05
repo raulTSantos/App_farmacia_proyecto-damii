@@ -21,8 +21,7 @@
 
 #include <grpc/support/port_platform.h>
 
-#include <grpc/compression.h>
-#include <grpc/slice.h>
+#include <grpc/impl/codegen/compression_types.h>
 
 #include "src/core/lib/gpr/useful.h"
 
@@ -91,7 +90,7 @@ int grpc_stream_compression_algorithm_parse(
 inline int grpc_compression_options_is_algorithm_enabled_internal(
     const grpc_compression_options* opts,
     grpc_compression_algorithm algorithm) {
-  return grpc_core::GetBit(opts->enabled_algorithms_bitset, algorithm);
+  return GPR_BITGET(opts->enabled_algorithms_bitset, algorithm);
 }
 
 #endif /* GRPC_CORE_LIB_COMPRESSION_COMPRESSION_INTERNAL_H */

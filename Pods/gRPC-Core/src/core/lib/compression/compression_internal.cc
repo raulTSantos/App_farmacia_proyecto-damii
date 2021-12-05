@@ -18,14 +18,13 @@
 
 #include <grpc/support/port_platform.h>
 
-#include "src/core/lib/compression/compression_internal.h"
-
 #include <stdlib.h>
 #include <string.h>
 
 #include <grpc/compression.h>
 
 #include "src/core/lib/compression/algorithm_metadata.h"
+#include "src/core/lib/compression/compression_internal.h"
 #include "src/core/lib/gpr/useful.h"
 #include "src/core/lib/slice/slice_utils.h"
 #include "src/core/lib/surface/api_trace.h"
@@ -35,26 +34,21 @@
 
 grpc_message_compression_algorithm
 grpc_message_compression_algorithm_from_slice(const grpc_slice& str) {
-  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_IDENTITY)) {
+  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_IDENTITY))
     return GRPC_MESSAGE_COMPRESS_NONE;
-  }
-  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_DEFLATE)) {
+  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_DEFLATE))
     return GRPC_MESSAGE_COMPRESS_DEFLATE;
-  }
-  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_GZIP)) {
+  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_GZIP))
     return GRPC_MESSAGE_COMPRESS_GZIP;
-  }
   return GRPC_MESSAGE_COMPRESS_ALGORITHMS_COUNT;
 }
 
 grpc_stream_compression_algorithm grpc_stream_compression_algorithm_from_slice(
     const grpc_slice& str) {
-  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_IDENTITY)) {
+  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_IDENTITY))
     return GRPC_STREAM_COMPRESS_NONE;
-  }
-  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_GZIP)) {
+  if (grpc_slice_eq_static_interned(str, GRPC_MDSTR_GZIP))
     return GRPC_STREAM_COMPRESS_GZIP;
-  }
   return GRPC_STREAM_COMPRESS_ALGORITHMS_COUNT;
 }
 
@@ -169,6 +163,7 @@ int grpc_compression_algorithm_from_message_stream_compression_algorithm(
         return 0;
     }
   }
+  return 0;
 }
 
 /* Interfaces for message compression. */
@@ -207,7 +202,7 @@ grpc_message_compression_algorithm grpc_message_compression_algorithm_for_level(
   }
 
   const size_t num_supported =
-      grpc_core::BitCount(accepted_encodings) - 1; /* discard NONE */
+      GPR_BITCOUNT(accepted_encodings) - 1; /* discard NONE */
   if (level == GRPC_COMPRESS_LEVEL_NONE || num_supported == 0) {
     return GRPC_MESSAGE_COMPRESS_NONE;
   }
@@ -228,7 +223,7 @@ grpc_message_compression_algorithm grpc_message_compression_algorithm_for_level(
   for (size_t i = 0; i < GPR_ARRAY_SIZE(algos_ranking); i++) {
     const grpc_message_compression_algorithm alg = algos_ranking[i];
     for (size_t j = 0; j < num_supported; j++) {
-      if (grpc_core::GetBit(accepted_encodings, alg) == 1) {
+      if (GPR_BITGET(accepted_encodings, alg) == 1) {
         /* if \a alg in supported */
         sorted_supported_algos[algos_supported_idx++] = alg;
         break;
@@ -265,6 +260,7 @@ int grpc_message_compression_algorithm_parse(
   } else {
     return 0;
   }
+  return 0;
 }
 
 /* Interfaces for stream compression. */
@@ -280,4 +276,5 @@ int grpc_stream_compression_algorithm_parse(
   } else {
     return 0;
   }
+  return 0;
 }

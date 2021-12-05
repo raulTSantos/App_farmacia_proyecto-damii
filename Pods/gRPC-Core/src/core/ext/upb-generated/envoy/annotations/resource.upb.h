@@ -9,12 +9,32 @@
 #ifndef ENVOY_ANNOTATIONS_RESOURCE_PROTO_UPB_H_
 #define ENVOY_ANNOTATIONS_RESOURCE_PROTO_UPB_H_
 
-#include "upb/msg_internal.h"
-#include "upb/decode.h"
-#include "upb/decode_fast.h"
-#include "upb/encode.h"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/generated_util.h"
+#else
+  #include  "upb/generated_util.h"
+#endif
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/msg.h"
+#else
+  #include  "upb/msg.h"
+#endif
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/decode.h"
+#else
+  #include  "upb/decode.h"
+#endif
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/encode.h"
+#else
+  #include  "upb/encode.h"
+#endif
 
-#include "upb/port_def.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_def.inc"
+#else
+  #include  "upb/port_def.inc"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,39 +48,31 @@ extern const upb_msglayout envoy_annotations_ResourceAnnotation_msginit;
 /* envoy.annotations.ResourceAnnotation */
 
 UPB_INLINE envoy_annotations_ResourceAnnotation *envoy_annotations_ResourceAnnotation_new(upb_arena *arena) {
-  return (envoy_annotations_ResourceAnnotation *)_upb_msg_new(&envoy_annotations_ResourceAnnotation_msginit, arena);
+  return (envoy_annotations_ResourceAnnotation *)upb_msg_new(&envoy_annotations_ResourceAnnotation_msginit, arena);
 }
 UPB_INLINE envoy_annotations_ResourceAnnotation *envoy_annotations_ResourceAnnotation_parse(const char *buf, size_t size,
                         upb_arena *arena) {
   envoy_annotations_ResourceAnnotation *ret = envoy_annotations_ResourceAnnotation_new(arena);
-  if (!ret) return NULL;
-  if (!upb_decode(buf, size, ret, &envoy_annotations_ResourceAnnotation_msginit, arena)) return NULL;
-  return ret;
-}
-UPB_INLINE envoy_annotations_ResourceAnnotation *envoy_annotations_ResourceAnnotation_parse_ex(const char *buf, size_t size,
-                           const upb_extreg *extreg, int options,
-                           upb_arena *arena) {
-  envoy_annotations_ResourceAnnotation *ret = envoy_annotations_ResourceAnnotation_new(arena);
-  if (!ret) return NULL;
-  if (!_upb_decode(buf, size, ret, &envoy_annotations_ResourceAnnotation_msginit, extreg, options, arena)) {
-    return NULL;
-  }
-  return ret;
+  return (ret && upb_decode(buf, size, ret, &envoy_annotations_ResourceAnnotation_msginit, arena)) ? ret : NULL;
 }
 UPB_INLINE char *envoy_annotations_ResourceAnnotation_serialize(const envoy_annotations_ResourceAnnotation *msg, upb_arena *arena, size_t *len) {
   return upb_encode(msg, &envoy_annotations_ResourceAnnotation_msginit, arena, len);
 }
 
-UPB_INLINE upb_strview envoy_annotations_ResourceAnnotation_type(const envoy_annotations_ResourceAnnotation *msg) { return *UPB_PTR_AT(msg, UPB_SIZE(0, 0), upb_strview); }
+UPB_INLINE upb_strview envoy_annotations_ResourceAnnotation_type(const envoy_annotations_ResourceAnnotation *msg) { return UPB_FIELD_AT(msg, upb_strview, UPB_SIZE(0, 0)); }
 
 UPB_INLINE void envoy_annotations_ResourceAnnotation_set_type(envoy_annotations_ResourceAnnotation *msg, upb_strview value) {
-  *UPB_PTR_AT(msg, UPB_SIZE(0, 0), upb_strview) = value;
+  UPB_FIELD_AT(msg, upb_strview, UPB_SIZE(0, 0)) = value;
 }
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif
 
-#include "upb/port_undef.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_undef.inc"
+#else
+  #include  "upb/port_undef.inc"
+#endif
 
 #endif  /* ENVOY_ANNOTATIONS_RESOURCE_PROTO_UPB_H_ */

@@ -54,7 +54,7 @@ void alts_check_peer(tsi_peer peer,
   *auth_context =
       grpc_core::internal::grpc_alts_auth_context_from_tsi_peer(&peer);
   tsi_peer_destruct(&peer);
-  grpc_error_handle error =
+  grpc_error* error =
       *auth_context != nullptr
           ? GRPC_ERROR_NONE
           : GRPC_ERROR_CREATE_FROM_STATIC_STRING(
@@ -82,17 +82,10 @@ class grpc_alts_channel_security_connector final
     tsi_handshaker* handshaker = nullptr;
     const grpc_alts_credentials* creds =
         static_cast<const grpc_alts_credentials*>(channel_creds());
-    size_t user_specified_max_frame_size = 0;
-    const grpc_arg* arg =
-        grpc_channel_args_find(args, GRPC_ARG_TSI_MAX_FRAME_SIZE);
-    if (arg != nullptr && arg->type == GRPC_ARG_INTEGER) {
-      user_specified_max_frame_size = grpc_channel_arg_get_integer(
-          arg, {0, 0, std::numeric_limits<int>::max()});
-    }
-    GPR_ASSERT(alts_tsi_handshaker_create(
-                   creds->options(), target_name_,
-                   creds->handshaker_service_url(), true, interested_parties,
-                   &handshaker, user_specified_max_frame_size) == TSI_OK);
+    GPR_ASSERT(alts_tsi_handshaker_create(creds->options(), target_name_,
+                                          creds->handshaker_service_url(), true,
+                                          interested_parties,
+                                          &handshaker) == TSI_OK);
     handshake_manager->Add(
         grpc_core::SecurityHandshakerCreate(handshaker, this, args));
   }
@@ -103,11 +96,6 @@ class grpc_alts_channel_security_connector final
     alts_check_peer(peer, auth_context, on_peer_checked);
   }
 
-  void cancel_check_peer(grpc_closure* /*on_peer_checked*/,
-                         grpc_error_handle error) override {
-    GRPC_ERROR_UNREF(error);
-  }
-
   int cmp(const grpc_security_connector* other_sc) const override {
     auto* other =
         reinterpret_cast<const grpc_alts_channel_security_connector*>(other_sc);
@@ -116,10 +104,10 @@ class grpc_alts_channel_security_connector final
     return strcmp(target_name_, other->target_name_);
   }
 
-  bool check_call_host(absl::string_view host,
+  bool check_call_host(grpc_core::StringView host,
                        grpc_auth_context* /*auth_context*/,
                        grpc_closure* /*on_call_host_checked*/,
-                       grpc_error_handle* error) override {
+                       grpc_error** error) override {
     if (host.empty() || host != target_name_) {
       *error = GRPC_ERROR_CREATE_FROM_STATIC_STRING(
           "ALTS call host does not match target name");
@@ -128,7 +116,7 @@ class grpc_alts_channel_security_connector final
   }
 
   void cancel_check_call_host(grpc_closure* /*on_call_host_checked*/,
-                              grpc_error_handle error) override {
+                              grpc_error* error) override {
     GRPC_ERROR_UNREF(error);
   }
 
@@ -139,7 +127,7 @@ class grpc_alts_channel_security_connector final
 class grpc_alts_server_security_connector final
     : public grpc_server_security_connector {
  public:
-  explicit grpc_alts_server_security_connector(
+  grpc_alts_server_security_connector(
       grpc_core::RefCountedPtr<grpc_server_credentials> server_creds)
       : grpc_server_security_connector(GRPC_ALTS_URL_SCHEME,
                                        std::move(server_creds)) {}
@@ -152,17 +140,9 @@ class grpc_alts_server_security_connector final
     tsi_handshaker* handshaker = nullptr;
     const grpc_alts_server_credentials* creds =
         static_cast<const grpc_alts_server_credentials*>(server_creds());
-    size_t user_specified_max_frame_size = 0;
-    const grpc_arg* arg =
-        grpc_channel_args_find(args, GRPC_ARG_TSI_MAX_FRAME_SIZE);
-    if (arg != nullptr && arg->type == GRPC_ARG_INTEGER) {
-      user_specified_max_frame_size = grpc_channel_arg_get_integer(
-          arg, {0, 0, std::numeric_limits<int>::max()});
-    }
     GPR_ASSERT(alts_tsi_handshaker_create(
                    creds->options(), nullptr, creds->handshaker_service_url(),
-                   false, interested_parties, &handshaker,
-                   user_specified_max_frame_size) == TSI_OK);
+                   false, interested_parties, &handshaker) == TSI_OK);
     handshake_manager->Add(
         grpc_core::SecurityHandshakerCreate(handshaker, this, args));
   }
@@ -171,11 +151,6 @@ class grpc_alts_server_security_connector final
                   grpc_core::RefCountedPtr<grpc_auth_context>* auth_context,
                   grpc_closure* on_peer_checked) override {
     alts_check_peer(peer, auth_context, on_peer_checked);
-  }
-
-  void cancel_check_peer(grpc_closure* /*on_peer_checked*/,
-                         grpc_error_handle error) override {
-    GRPC_ERROR_UNREF(error);
   }
 
   int cmp(const grpc_security_connector* other) const override {

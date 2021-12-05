@@ -7,30 +7,46 @@
  * regenerated. */
 
 #include <stddef.h>
-#include "upb/msg_internal.h"
-#include "src/proto/grpc/health/v1/health.upb.h"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/msg.h"
+#else
+  #include  "upb/msg.h"
+#endif
+#if COCOAPODS==1
+  #include  "src/core/ext/upb-generated/src/proto/grpc/health/v1/health.upb.h"
+#else
+  #include  "src/proto/grpc/health/v1/health.upb.h"
+#endif
 
-#include "upb/port_def.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_def.inc"
+#else
+  #include  "upb/port_def.inc"
+#endif
 
 static const upb_msglayout_field grpc_health_v1_HealthCheckRequest__fields[1] = {
-  {1, UPB_SIZE(0, 0), 0, 0, 9, _UPB_MODE_SCALAR},
+  {1, UPB_SIZE(0, 0), 0, 0, 9, 1},
 };
 
 const upb_msglayout grpc_health_v1_HealthCheckRequest_msginit = {
   NULL,
   &grpc_health_v1_HealthCheckRequest__fields[0],
-  UPB_SIZE(8, 16), 1, false, 1, 255,
+  UPB_SIZE(8, 16), 1, false,
 };
 
 static const upb_msglayout_field grpc_health_v1_HealthCheckResponse__fields[1] = {
-  {1, UPB_SIZE(0, 0), 0, 0, 14, _UPB_MODE_SCALAR},
+  {1, UPB_SIZE(0, 0), 0, 0, 14, 1},
 };
 
 const upb_msglayout grpc_health_v1_HealthCheckResponse_msginit = {
   NULL,
   &grpc_health_v1_HealthCheckResponse__fields[0],
-  UPB_SIZE(8, 8), 1, false, 1, 255,
+  UPB_SIZE(8, 8), 1, false,
 };
 
-#include "upb/port_undef.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_undef.inc"
+#else
+  #include  "upb/port_undef.inc"
+#endif
 

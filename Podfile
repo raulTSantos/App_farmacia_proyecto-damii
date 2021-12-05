@@ -8,9 +8,9 @@ target 'App_Farmacia_damii' do
   # Pods for App_Farmacia_damii
   pod 'AppAuth', '1.2.0'
   pod 'DropDown','2.3.4'
-  pod 'Firebase/Analytics' ,'4.9.0'
+  # pod 'Firebase/Analytics' ,'6.9.0'
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
   pod 'GoogleSignIn'
-  pod 'FacebookLogin'
+  # pod 'FacebookLogin'
 end

@@ -22,7 +22,6 @@
 #include <grpc/support/port_platform.h>
 
 #include <grpc/compression.h>
-
 #include "src/core/lib/compression/compression_internal.h"
 #include "src/core/lib/transport/metadata.h"
 

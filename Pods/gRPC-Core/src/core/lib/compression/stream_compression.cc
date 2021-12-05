@@ -18,10 +18,9 @@
 
 #include <grpc/support/port_platform.h>
 
-#include "src/core/lib/compression/stream_compression.h"
-
 #include <grpc/support/log.h>
 
+#include "src/core/lib/compression/stream_compression.h"
 #include "src/core/lib/compression/stream_compression_gzip.h"
 #include "src/core/lib/slice/slice_utils.h"
 

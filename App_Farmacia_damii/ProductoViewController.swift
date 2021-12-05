@@ -148,6 +148,13 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
         firebaseLogOut()
     }
     
+    @IBAction func btnProfileAction(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let viewc = storyboard.instantiateViewController(withIdentifier: "perfil") as! ProfileViewController
+        viewc.email = userPerfil
+        self.navigationController?.pushViewController(viewc, animated: true)
+    }
+    
     
    /* private func getData(){
         dataProductos.collection("producto").getDocuments { (querySnapshot, err) in

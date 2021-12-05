@@ -9,12 +9,32 @@
 #ifndef GOOGLE_API_ANNOTATIONS_PROTO_UPB_H_
 #define GOOGLE_API_ANNOTATIONS_PROTO_UPB_H_
 
-#include "upb/msg_internal.h"
-#include "upb/decode.h"
-#include "upb/decode_fast.h"
-#include "upb/encode.h"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/generated_util.h"
+#else
+  #include  "upb/generated_util.h"
+#endif
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/msg.h"
+#else
+  #include  "upb/msg.h"
+#endif
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/decode.h"
+#else
+  #include  "upb/decode.h"
+#endif
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/encode.h"
+#else
+  #include  "upb/encode.h"
+#endif
 
-#include "upb/port_def.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_def.inc"
+#else
+  #include  "upb/port_def.inc"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,6 +45,10 @@ extern "C" {
 }  /* extern "C" */
 #endif
 
-#include "upb/port_undef.inc"
+#if COCOAPODS==1
+  #include  "third_party/upb/upb/port_undef.inc"
+#else
+  #include  "upb/port_undef.inc"
+#endif
 
 #endif  /* GOOGLE_API_ANNOTATIONS_PROTO_UPB_H_ */

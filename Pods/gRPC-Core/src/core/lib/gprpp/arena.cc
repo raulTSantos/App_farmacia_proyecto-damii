@@ -21,7 +21,6 @@
 #include "src/core/lib/gprpp/arena.h"
 
 #include <string.h>
-
 #include <new>
 
 #include <grpc/support/alloc.h>
@@ -76,7 +75,7 @@ std::pair<Arena*, void*> Arena::CreateWithAlloc(size_t initial_size,
 }
 
 size_t Arena::Destroy() {
-  size_t size = total_used_.load(std::memory_order_relaxed);
+  size_t size = total_used_.Load(MemoryOrder::RELAXED);
   this->~Arena();
   gpr_free_aligned(this);
   return size;

@@ -21,7 +21,29 @@ enum ProviderType: String {
 
 class ProfileViewController: UIViewController {
     
-    private let email: String
+     var email = ""
+    
+    @IBOutlet weak var txtNombres: UITextField!
+    @IBOutlet weak var txtEmail: UITextField!
+    @IBOutlet weak var txtDNI: UITextField!
+    @IBOutlet weak var txtTelefono: UITextField!
+    @IBOutlet weak var txtDireccion: UITextField!
+    @IBOutlet weak var txtClave: UITextField!
+    
+    @IBOutlet weak var btnGrabar: UIButton!
+    @IBOutlet weak var btnEliminarCuenta: UIButton!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+       // navigationItem.setHidesBackButton(true, animated: false)
+        txtEmail.text = email
+    }
+    
+    
+    
+    
+    
+  /*  private let email: String
     private let provider: ProviderType
     
     @IBOutlet weak var txtProducto: UITextField!
@@ -122,7 +144,7 @@ class ProfileViewController: UIViewController {
             //se ha producido un error
             
         }
-    }
+    }*/
 
 }
 
