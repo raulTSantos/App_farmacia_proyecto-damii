@@ -352,12 +352,34 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - AppAuth (1.2.0):
+    - AppAuth/Core (= 1.2.0)
+    - AppAuth/ExternalUserAgent (= 1.2.0)
+  - AppAuth/Core (1.2.0)
+  - AppAuth/ExternalUserAgent (1.2.0)
   - BoringSSL-GRPC (0.0.22):
     - BoringSSL-GRPC/Implementation (= 0.0.22)
     - BoringSSL-GRPC/Interface (= 0.0.22)
   - BoringSSL-GRPC/Implementation (0.0.22):
     - BoringSSL-GRPC/Interface (= 0.0.22)
   - BoringSSL-GRPC/Interface (0.0.22)
+  - DropDown (2.3.4)
+  - FacebookCore (0.9.0):
+    - FBSDKCoreKit (~> 5.0)
+  - FacebookLogin (0.9.0):
+    - FacebookCore (~> 0.9.0)
+    - FBSDKCoreKit (~> 5.0)
+    - FBSDKLoginKit (~> 5.0)
+  - FBSDKCoreKit (5.15.1):
+    - FBSDKCoreKit/Basics (= 5.15.1)
+    - FBSDKCoreKit/Core (= 5.15.1)
+  - FBSDKCoreKit/Basics (5.15.1)
+  - FBSDKCoreKit/Core (5.15.1):
+    - FBSDKCoreKit/Basics
+  - FBSDKLoginKit (5.15.1):
+    - FBSDKLoginKit/Login (= 5.15.1)
+  - FBSDKLoginKit/Login (5.15.1):
+    - FBSDKCoreKit (~> 5.0)
   - Firebase/Analytics (4.9.0):
     - Firebase/Core
   - Firebase/Auth (4.9.0):
@@ -388,6 +410,10 @@ PODS:
     - Protobuf (~> 3.1)
   - FirebaseInstanceID (2.0.10):
     - FirebaseCore (~> 4.0)
+  - GoogleSignIn (5.0.2):
+    - AppAuth (~> 1.2)
+    - GTMAppAuth (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
   - GoogleToolboxForMac/DebugUtils (2.3.2):
     - GoogleToolboxForMac/Defines (= 2.3.2)
   - GoogleToolboxForMac/Defines (2.3.2)
@@ -453,7 +479,14 @@ PODS:
     - gRPC/Interface-Legacy (= 1.42.0)
   - gRPC/Interface-Legacy (1.42.0):
     - gRPC-RxLibrary/Interface (= 1.42.0)
+  - GTMAppAuth (1.0.0):
+    - AppAuth/Core (~> 1.0)
+    - GTMSessionFetcher (~> 1.1)
+  - GTMSessionFetcher (1.7.0):
+    - GTMSessionFetcher/Full (= 1.7.0)
   - GTMSessionFetcher/Core (1.7.0)
+  - GTMSessionFetcher/Full (1.7.0):
+    - GTMSessionFetcher/Core (= 1.7.0)
   - leveldb-library (1.22.1)
   - Libuv-gRPC (0.0.10):
     - Libuv-gRPC/Implementation (= 0.0.10)
@@ -469,25 +502,37 @@ PODS:
   - Protobuf (3.19.1)
 
 DEPENDENCIES:
+  - AppAuth (= 1.2.0)
+  - DropDown (= 2.3.4)
+  - FacebookLogin
   - Firebase/Analytics (= 4.9.0)
   - Firebase/Auth
   - Firebase/Firestore
+  - GoogleSignIn
 
 SPEC REPOS:
   trunk:
     - abseil
+    - AppAuth
     - BoringSSL-GRPC
+    - DropDown
+    - FacebookCore
+    - FacebookLogin
+    - FBSDKCoreKit
+    - FBSDKLoginKit
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
     - FirebaseCore
     - FirebaseFirestore
     - FirebaseInstanceID
+    - GoogleSignIn
     - GoogleToolboxForMac
     - gRPC
     - gRPC-Core
     - gRPC-ProtoRPC
     - gRPC-RxLibrary
+    - GTMAppAuth
     - GTMSessionFetcher
     - leveldb-library
     - Libuv-gRPC
@@ -496,24 +541,32 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   abseil: d417d564897b02229a298b2ce4263f79bf1e91c7
+  AppAuth: bce82c76043657c99d91e7882e8a9e1a93650cd4
   BoringSSL-GRPC: 5389f4369ae253bc650eb21c2068620a81cb83ce
+  DropDown: f225ff0fd09dde064d17aa03db7e4d4e4ff40b6b
+  FacebookCore: ba86524b66cfa86d0f8e65d08faa8504a9f732dd
+  FacebookLogin: 6cee9fd6e1fe976fe8f7eec199e27b28b14f5d63
+  FBSDKCoreKit: 1d5acf7c9d7a2f92bb1a242dc60cae5b7adb91df
+  FBSDKLoginKit: f1ea8026a58b52d30c9f2e6a58ca7d813619fb83
   Firebase: 632216af3ed7f31e3be34776947fdc7546cfb572
   FirebaseAnalytics: 388b630c15713f5dbf364071f5f3d6077fb52f4e
   FirebaseAuth: aaaf68d5064a6c8fec435758f83a43b8db26ccaa
   FirebaseCore: 3bd047463058fa6b5d312c97502c52e45401cdfb
   FirebaseFirestore: a6db7a47c6a47d26069892d7db39f7792f2f7f9a
   FirebaseInstanceID: 8d20d890d65c917f9f7d9950b6e10a760ad34321
+  GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
   GoogleToolboxForMac: 8bef7c7c5cf7291c687cf5354f39f9db6399ad34
   gRPC: 56e732a06ff459526c6ab0d3860b4e3acf378d06
   gRPC-Core: a9799f023027cd2e1a404dfb076bbcdeb4d6b1cd
   gRPC-ProtoRPC: 9eee1340b577824b55011df36dd6244dbb8706e6
   gRPC-RxLibrary: 6294fc693e559976b8ccb3b5768912af56db8b09
+  GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   Libuv-gRPC: 55e51798e14ef436ad9bc45d12d43b77b49df378
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   Protobuf: 3724efa50cb2846d7ccebc8691c574e85fd74471
 
-PODFILE CHECKSUM: f2ffbf410b1df0793c3cdd697edb47e09e9c1adc
+PODFILE CHECKSUM: b4516cb09553399750a10d4f0be9ef50815762a5
 
 COCOAPODS: 1.11.2
