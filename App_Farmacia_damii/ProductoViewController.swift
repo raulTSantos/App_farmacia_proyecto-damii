@@ -23,25 +23,9 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
     @IBOutlet weak var btnPerfil: UIButton!
     
     var userPerfil = ""
-    // base de datos de producto
-   // let dataProductos = Firestore.firestore()
     var productoObj = [Producto]()
     var currentProductoArray = [Producto]()
-    
-   // private let email: String
-   // private let provider: ProviderType
-    
-    
-   /* init(email: String , provider: ProviderType){
-        
-        self.email = email
-        self.provider = provider
-        
-        super.init(nibName: nil , bundle: nil)
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }*/
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,15 +63,15 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
     }
     private func setUpProductos(){
         productoObj.append(Producto(nombre: "Paracetamol", toma: "pastillas", precio: Double(1.20), categoria: .analgesico,image : "image01"))
-        productoObj.append(Producto(nombre: "Paracetamol", toma: "pastillas", precio: Double(1.00), categoria: .analgesico,image : "image01"))
-        productoObj.append(Producto(nombre: "Locepal", toma: "pastillas", precio: Double(1.80), categoria: .analgesico,image : "image01"))
-        productoObj.append(Producto(nombre: "MigrañaDol", toma: "pastillas", precio: Double(1.20), categoria: .antidepresivo,image : "image01"))
-        productoObj.append(Producto(nombre: "Pareacetamol", toma: "jarabe", precio: Double(1.50), categoria: .antidepresivo,image : "image01"))
-        productoObj.append(Producto(nombre: "Antigripal", toma: "pastillas", precio: Double(1.50), categoria: .analgesico,image : "image01"))
-        productoObj.append(Producto(nombre: "Loperamida", toma: "pastillas", precio: Double(3.20), categoria: .analgesico,image : "image01"))
-        productoObj.append(Producto(nombre: "Ibuprofeno", toma: "jarabe", precio: Double(3.50), categoria: .analgesico,image : "image01"))
-        productoObj.append(Producto(nombre: "Aciclovir", toma: "pastillas", precio: Double(3.20), categoria: .antimicotico,image : "image01"))
-        productoObj.append(Producto(nombre: "Clotrimazol", toma: "pastillas", precio: Double(5.50), categoria: .antimicotico,image : "image01"))
+        productoObj.append(Producto(nombre: "Paracetamol", toma: "jarabe", precio: Double(1.00), categoria: .analgesico,image : "image01"))
+        productoObj.append(Producto(nombre: "Locepal", toma: "pastillas", precio: Double(1.80), categoria: .analgesico,image : "image02"))
+        productoObj.append(Producto(nombre: "MigrañaDol", toma: "pastillas", precio: Double(1.20), categoria: .antidepresivo,image : "image05"))
+        productoObj.append(Producto(nombre: "Bismutol", toma: "jarabe", precio: Double(1.50), categoria: .antidepresivo,image : "image02"))
+        productoObj.append(Producto(nombre: "Antigripal", toma: "pastillas", precio: Double(1.50), categoria: .analgesico,image : "image04"))
+        productoObj.append(Producto(nombre: "Loperamida", toma: "pastillas", precio: Double(3.20), categoria: .analgesico,image : "image06"))
+        productoObj.append(Producto(nombre: "Ibuprofeno", toma: "jarabe", precio: Double(3.50), categoria: .analgesico,image : "image08"))
+        productoObj.append(Producto(nombre: "Aciclovir", toma: "pastillas", precio: Double(3.20), categoria: .antimicotico,image : "image03"))
+        productoObj.append(Producto(nombre: "Clotrimazol", toma: "pastillas", precio: Double(5.50), categoria: .antimicotico,image : "image07"))
          currentProductoArray = productoObj
 
     }
@@ -154,24 +138,15 @@ class ProductoViewController: UIViewController , UITableViewDataSource , UITable
         viewc.email = userPerfil
         self.navigationController?.pushViewController(viewc, animated: true)
     }
-    
-    
-   /* private func getData(){
-        dataProductos.collection("producto").getDocuments { (querySnapshot, err) in
-            if let err = err {
-                print(err)
-            }else{
-                for docProduct in querySnapshot!.documents{
-                    self.productoObj.append(Producto(nombre: docProduct["nombre"] as? String ?? "", toma: docProduct["toma"] as? String ?? "", precio: docProduct["precio"] as? Double ?? 0 , categoria: ., image: <#T##String#>))
-                }
-            }
-        }
-    }*/
 
     private func firebaseLogOut(){
         do{
             try Auth.auth().signOut()
-            navigationController?.popViewController(animated: true)
+           
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let viewc = storyboard.instantiateViewController(withIdentifier: "login")
+            self.navigationController?.pushViewController(viewc, animated: true)
+            // navigationController?.popViewController(animated: true)
             /*let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let viewc = storyboard.instantiateViewController(withIdentifier: "login")
             viewc.modalPresentationStyle = .overFullScreen
@@ -199,3 +174,16 @@ enum Categoria : String{
     case antidepresivo = "antidepresivo"
     case antimicotico = "antimicotico"
 }
+
+
+/* private func getData(){
+ dataProductos.collection("producto").getDocuments { (querySnapshot, err) in
+ if let err = err {
+ print(err)
+ }else{
+ for docProduct in querySnapshot!.documents{
+ self.productoObj.append(Producto(nombre: docProduct["nombre"] as? String ?? "", toma: docProduct["toma"] as? String ?? "", precio: docProduct["precio"] as? Double ?? 0 , categoria: ., image: <#T##String#>))
+ }
+ }
+ }
+ }*/

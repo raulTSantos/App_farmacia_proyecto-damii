@@ -9,7 +9,6 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
-//import DropDown
 
 class AuthViewController: UIViewController {
     
@@ -24,19 +23,12 @@ class AuthViewController: UIViewController {
     @IBOutlet weak var txtEmail: UITextField!
     
     @IBOutlet weak var txtComfirmaClave: UITextField!
-    
-    /*
-    let dropDown = DropDown()
-    let tipoProducto = ["Jarabe" , "Pastilla"]
-    var tipoSeleccion : String = ""
-    */
-    
     @IBOutlet weak var labelTipo: UILabel!
 
     private let db = Firestore.firestore()
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        navigationItem.setHidesBackButton(true, animated: false)
     }
     
     @IBAction func btnRegistrarAction(_ sender: Any) {
@@ -77,7 +69,8 @@ class AuthViewController: UIViewController {
             mensaje(titulo: "Error", texto: "Ingrese un password")
             return
         }
-        login()
+      
+       login()
     }
 
     
@@ -91,7 +84,7 @@ class AuthViewController: UIViewController {
                  viewc.userPerfil = self.txtEmail.text!
                  self.navigationController?.pushViewController(viewc, animated: true)
                 
-               let newUser = self.db.collection("usuario").document()
+                let newUser = self.db.collection("usuario").document(self.txtEmail.text ?? "")
                 newUser.setData(["email":self.txtEmail.text ?? "","clave":self.txtClave.text ?? "",
                                  "nombre":self.txtNombre.text ?? "","apellido":self.txtApellido.text ?? "",
                                  "telefono":self.txtTelefono.text ?? ""]){error in
@@ -116,37 +109,6 @@ class AuthViewController: UIViewController {
     }
     
 
-    @IBAction func registrarAction(_ sender: Any) {
-        
-        /*if let nombre = txtNombre.text,
-            let apellido = txtNombre.text,
-            let telefono = txtNombre.text,
-            let email = txtEmail.text,
-            let password = txtClave.text,
-            let confirmpassword = txtComfirmaClave.text,
-            self.tipoSeleccion != ""{
-            
-            Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-                if error != nil{
-                    self.mensaje(texto: "Error al registrar")
-                    
-                }else{
-                    let base = Firestore.firestore()
-                    base.collection("user").addDocument(data: ["nombre" : nombre, "tipo" : self.tipoSeleccion, "uid":result!.user.uid]){ error in
-                        if error != nil {
-                            self.mensaje(texto: "Error al registrar")
-                            
-                        }else{
-                            self.mensaje(texto: "Usuario Agregado" )
-                        }
-                    }
-                }
-            }
-        }else{
-            self.mensaje(texto: "Campos obligatorios")
-        }*/
-    }
-
     
     func login(){
         Auth.auth().signIn(withEmail: txtEmail.text!, password: txtClave.text!){
@@ -159,9 +121,27 @@ class AuthViewController: UIViewController {
                 self.navigationController?.pushViewController(viewc, animated: true)
                 
             }else{
-                let alert = UIAlertController ( title: "Error", message: "Se ha producido un Error", preferredStyle: .alert)
-                alert.addAction(UIAlertAction (title: "Aceptar", style: .default))
-                self.present(alert, animated: true, completion: nil)
+                self.db.collection("usuario").document(self.txtEmail.text ?? "").getDocument { (documentSnapshot, error) in
+                    if let document = documentSnapshot, error == nil {
+                        let email = document.get("email") as? String
+                        let clave = document.get("clave") as? String
+                        if email == nil && clave == nil{
+                            self.mensaje(titulo: "Error", texto: "Usuario no encontrado")
+                       
+                        }
+                        else if  !(clave?.elementsEqual(self.txtClave.text ?? ""))! {
+                            self.mensaje(titulo: "Error", texto: "contraseña invalida")
+                        }
+                       
+                        
+                    }
+                    else{
+                       /* let alert = UIAlertController ( title: "Error", message: "Usuario no encontrado", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction (title: "Aceptar", style: .default))
+                        self.present(alert, animated: true, completion: nil)*/
+                    }
+                 }
+              
             }
             
         }

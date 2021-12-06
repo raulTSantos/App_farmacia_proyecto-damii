@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="efM-5K-mrM">
-                                <rect key="frame" x="16" y="80" width="343" height="182"/>
+                                <rect key="frame" x="16" y="36" width="343" height="182"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VSJ-cI-EMw">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="30"/>
@@ -106,7 +106,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="bMZ-zN-h3r">
-                                <rect key="frame" x="16" y="80" width="343" height="340.5"/>
+                                <rect key="frame" x="16" y="36" width="343" height="340.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Registrar Nueva Cuenta" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QtM-KS-zi8">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="20.5"/>
@@ -162,7 +162,13 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rGT-LW-DyO">
                                         <rect key="frame" x="0.0" y="310.5" width="343" height="30"/>
-                                        <state key="normal" title="prod"/>
+                                        <color key="backgroundColor" red="0.23650126477397476" green="0.96097715736040612" blue="0.7993625512958531" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" title="Regresar al Login">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <segue destination="djh-yD-z8S" kind="show" id="ORf-XA-1C2"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>
@@ -371,10 +377,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="vn2-mi-WeF">
-                                <rect key="frame" x="16" y="72" width="344" height="114"/>
+                                <rect key="frame" x="16" y="72" width="343" height="200"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Producto" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ka2-4K-xGL">
-                                        <rect key="frame" x="0.0" y="0.0" width="344" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="bvC-9a-IKm"/>
                                         </constraints>
@@ -383,10 +389,10 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="MFq-6Q-ve6">
-                                        <rect key="frame" x="0.0" y="42" width="344" height="30"/>
+                                        <rect key="frame" x="0.0" y="42" width="343" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mTa-W6-dLo">
-                                                <rect key="frame" x="0.0" y="0.0" width="167" height="30"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="166" height="30"/>
                                                 <color key="backgroundColor" red="0.10276240855455399" green="0.73568743467330933" blue="0.084473364055156708" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="167" id="8qw-UG-RIs"/>
@@ -397,7 +403,7 @@
                                                 </state>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sQD-BX-bo9">
-                                                <rect key="frame" x="177" y="0.0" width="167" height="30"/>
+                                                <rect key="frame" x="176" y="0.0" width="167" height="30"/>
                                                 <color key="backgroundColor" red="0.0" green="0.58980089430000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="167" id="Dk2-7Z-T3a"/>
@@ -410,10 +416,10 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="3ha-nT-8hA">
-                                        <rect key="frame" x="0.0" y="84" width="344" height="30"/>
+                                        <rect key="frame" x="0.0" y="84" width="343" height="116"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UD3-jf-Ued">
-                                                <rect key="frame" x="0.0" y="0.0" width="167" height="30"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="167" height="116"/>
                                                 <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="167" id="8O3-9M-qtp"/>
@@ -424,7 +430,7 @@
                                                 </state>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eC9-GT-TIZ">
-                                                <rect key="frame" x="177" y="0.0" width="167" height="30"/>
+                                                <rect key="frame" x="177" y="0.0" width="166" height="116"/>
                                                 <color key="backgroundColor" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="167" id="JSn-mr-IXo"/>
@@ -486,7 +492,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nacimiento" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2XE-vx-60e">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nacimiento : DD/MM/AAAA" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2XE-vx-60e">
                                         <rect key="frame" x="0.0" y="117" width="343" height="30"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -522,6 +528,9 @@
                                         <state key="normal" title="Grabar">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnGrabarAction:" destination="Gn8-VN-O9W" eventType="touchUpInside" id="FgC-hD-eWS"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yOz-Yq-8PL">
                                         <rect key="frame" x="0.0" y="351" width="343" height="30"/>
@@ -529,6 +538,9 @@
                                         <state key="normal" title="Eliminar Cuenta">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnEliminarAction:" destination="Gn8-VN-O9W" eventType="touchUpInside" id="Deh-x5-bcX"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>
@@ -548,10 +560,12 @@
                     <connections>
                         <outlet property="btnEliminarCuenta" destination="yOz-Yq-8PL" id="zVg-LX-4AY"/>
                         <outlet property="btnGrabar" destination="GPc-Gz-3Gr" id="wLl-mM-0nQ"/>
+                        <outlet property="txtApellidos" destination="Azz-kd-X8c" id="mgm-eb-Ej1"/>
                         <outlet property="txtClave" destination="krw-M5-e2R" id="xo2-h7-tEb"/>
-                        <outlet property="txtDNI" destination="Azz-kd-X8c" id="DbY-5E-BCT"/>
+                        <outlet property="txtDNI" destination="xCT-Ws-dI0" id="HQJ-4C-6lp"/>
                         <outlet property="txtDireccion" destination="8bV-J9-bis" id="Y64-EH-bb4"/>
                         <outlet property="txtEmail" destination="nC4-S4-t1W" id="qF1-Kz-oqz"/>
+                        <outlet property="txtNacimiento" destination="2XE-vx-60e" id="F1x-TP-bZH"/>
                         <outlet property="txtNombres" destination="ZX6-gr-DDf" id="1Su-JL-UPb"/>
                         <outlet property="txtTelefono" destination="umY-Bz-S8M" id="LNM-sG-pOD"/>
                     </connections>
@@ -582,4 +596,7 @@
     <resources>
         <image name="Image" width="384" height="384"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="ORf-XA-1C2"/>
+    </inferredMetricsTieBreakers>
 </document>
